@@ -21,6 +21,7 @@ class Taxi < Actor
     self.action = :idle_right
     @facing_dir = :right
     @speed = 50
+    @max_speed = 800
     @left_vec = vec2(-@speed,0)
     @right_vec = -@left_vec
     i = input_manager
@@ -85,6 +86,15 @@ class Taxi < Actor
     move_up time if moving_up?
     move_right time if moving_right?
     move_left time if moving_left?
+    enforce_limits time
+  end
+
+  def enforce_limits(time)
+    physical.body.a = -1.57079633
+    physical.body.w -= 30 if physical.body.w > 2.5
+    if physical.body.v.length > @max_speed
+      physical.body.apply_impulse(-physical.body.v*time, ZeroVec2)
+    end
   end
 
   def move_up(time)
