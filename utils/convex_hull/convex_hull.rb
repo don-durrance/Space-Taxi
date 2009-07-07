@@ -1,11 +1,17 @@
-# Gets vertices for a chipmunk collision body
+# Gets vertices for a chipmunk collision body and
 # prints them for use with gamebox!
+#
+# requires RMagick 2
 #
 # Just color the upper left hand corner pixel with your "key" color (only one pixel!), then
 # use the same color to draw a single pixel for each vertex on your sprite image
 #
 # I got the ConvexHull algorithm from http://branch14.org/snippets/convex_hull_in_ruby.html
 # The author appears to be uncredited, but thanks dude!
+#
+# This script is totally messy but it works. Feel free to clean it up if you like.
+#
+# - antivert
 
 require 'rubygems'
 require 'RMagick'
