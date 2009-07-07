@@ -11,17 +11,18 @@ end
 
 class Taxi < Actor
 
-  has_behaviors :animated, :updatable, :physical => {:shape => :circle,
+  has_behaviors :animated, :updatable, :physical => {:shape => :poly,
     :mass => 125,
     :friction => 1.7,
-    :angle => -1.57079633,
-    :radius => 10}
+    :verts => [[-36,-15],[-36,15],[36,15],[36,-15]],
+  }
 
   def setup
     self.action = :idle_right
     @facing_dir = :right
     @speed = 50
     @max_speed = 800
+    @up_vec = vec2(0,-@speed)
     @left_vec = vec2(-@speed,0)
     @right_vec = -@left_vec
     i = input_manager
@@ -90,7 +91,7 @@ class Taxi < Actor
   end
 
   def enforce_limits(time)
-    physical.body.a = -1.57079633
+    physical.body.a = 0
     physical.body.w -= 30 if physical.body.w > 2.5
     if physical.body.v.length > @max_speed
       physical.body.apply_impulse(-physical.body.v*time, ZeroVec2)
@@ -98,8 +99,7 @@ class Taxi < Actor
   end
 
   def move_up(time)
-    move_vec = physical.body.rot*time*@speed
-    physical.body.apply_impulse(move_vec, ZeroVec2)
+    physical.body.apply_impulse(@up_vec*time, ZeroVec2)
   end
 
   def move_left(time)
