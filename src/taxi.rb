@@ -14,7 +14,8 @@ class Taxi < Actor
   has_behaviors :animated, :updatable, :physical => {:shape => :poly,
     :mass => 125,
     :friction => 1.7,
-    :verts => [[-22, -15], [-22, 4], [35, 4], [36, -15], ]
+  :verts => [[-29, -15], [-29, 2], [28, 2], [27, -15], ]
+
  } 
 
   def setup
