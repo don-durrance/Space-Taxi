@@ -14,18 +14,8 @@ class Taxi < Actor
   has_behaviors :animated, :updatable, :physical => {:shape => :poly,
     :mass => 125,
     :friction => 1.7,
-   # :verts => [[-36,-15],[-36,15],[36,15],[36,-15]],
-#    :verts => [ [-22, -5], [-5, -14], [10, -14], [31, -6], [35, 3], [-22, 2] ]
-    :verts => [
-      [-22, 2], 
-      [35, 3], 
-      [31, -6], 
-      [10, -14], 
-      [-5, -14], 
-      [-22, -5], 
-  ]
-
-  }
+    :verts => [[-22, -15], [-22, 4], [35, 4], [36, -15], ]
+ } 
 
   def setup
     self.action = :idle_right
