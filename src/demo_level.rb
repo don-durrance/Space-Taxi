@@ -11,6 +11,7 @@ class DemoLevel < PhysicalLevel
     right_wall = create_actor :right_wall, :view => false
     bottom_wall = create_actor :bottom_wall, :view => false
     @platform1 = create_actor :platform, :x => 300, :y => 400
+    man = create_actor :man, :x => 300, :y => 367
 
 
     @stars = []
