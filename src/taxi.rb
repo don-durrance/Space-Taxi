@@ -58,6 +58,7 @@ class Taxi < Actor
 
     i.reg KeyUpEvent, K_UP do
       @moving_up = false
+      @landed = false
     end
 
     i.reg KeyUpEvent, K_LEFT do
