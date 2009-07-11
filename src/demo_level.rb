@@ -60,7 +60,6 @@ class DemoLevel < PhysicalLevel
       taxi_parts.each do |part_class,part|
         part = create_actor part.to_s, :x => eval(part_class).offset_x(direction) + @taxi.x, :y => eval(part_class).offset_y(direction) + @taxi.y
         part.action = direction
-        part.physical.body.v = @taxi.physical.body.v
       end
 
     end

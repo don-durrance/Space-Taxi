@@ -1,15 +1,31 @@
 class Part < Actor
-  attr_accessor :offset_x_left, :offset_x_right, :offset_y_left, :offset_y_right
+  attr_accessor :offset_x_left, :offset_x_right, :offset_y, :base_v
+
+  def setup
+    @speed = 20
+    @turn_speed = rand(2)*0.00004
+    @ttl = 1000+rand(1000)
+    x = (rand-0.5) * 2
+    y = (rand-0.5) * 2
+    @dir = vec2(x,y)
+    physical.body.apply_impulse(@dir*500*@speed, ZeroVec2) 
+  end
+
+  def update(time)
+    @ttl -= time
+    remove_self if @ttl < 0
+    super time
+  end
 
 end
 
 class TaxiBlower < Part
-
  has_behaviors :animated, :updatable, :physical => {:shape => :circle,
     :radius => 3,
   :angle => -1.57079633,
   :mass => 50
   }
+
 
   OFFSET_X_LEFT = -15
   OFFSET_X_RIGHT = 15
