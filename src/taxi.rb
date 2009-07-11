@@ -72,7 +72,6 @@ class Taxi < Actor
 
   def land
     @landed = true
-    puts 'landing!'
   end
 
   def moving_up?;@moving_up;end
