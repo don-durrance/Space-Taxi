@@ -18,7 +18,7 @@ class DemoLevel < PhysicalLevel
       unless @taxi.dying then
         @taxi.dying = true
         create_taxi_parts(@taxi.facing_dir)
-        puts @taxi.facing_dir
+        explosion = create_actor :particle_system, :x => @taxi.x, :y => @taxi.y
         @taxi.die
       end
     end
@@ -30,7 +30,7 @@ class DemoLevel < PhysicalLevel
         unless @taxi.dying then
         @taxi.dying = true
       create_taxi_parts(@taxi.facing_dir)
-      puts @taxi.facing_dir
+        explosion = create_actor :particle_system, :x => @taxi.x, :y => @taxi.y
         @taxi.die
         end
       end
