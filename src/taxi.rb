@@ -4,19 +4,25 @@ require 'graphical_actor_view'
 
 class TaxiView < GraphicalActorView
   def draw(target, x_off, y_off)
-#    target.draw_box [@actor.x,@actor.y], [20,20], [240,45,45,255]
+    #    target.draw_box [@actor.x,@actor.y], [20,20], [240,45,45,255]
     super target, x_off, y_off
   end
 end
 
 class Taxi < Actor
 
-  has_behaviors :animated, :updatable, :physical => {:shape => :poly,
+  has_behaviors :animated, :updatable, 
+    :physical => {
+    :shape => :poly,
     :mass => 125,
     :friction => 1.7,
-  :verts => [[-29, -15], [-29, 2], [28, 2], [27, -15], ]
+    :verts => [[-29, -15], [-29, 2], [28, 2], [27, -15] ],
+    :parts => [ 
+      :taxi_right_gear => {:verts => [[7, 3], [9, 11], [18, 11], [12, 3] ], :shape => :poly, :offset => vec2(0,0)  },
+      :taxi_left_gear => {:verts => [[-20, 11], [-11, 11], [-8, 3], [-14, 3], ], :shape => :poly, :offset => vec2(0,0) }
+  ]
 
- } 
+  } 
 
   def setup
     self.action = :idle_right
@@ -30,15 +36,16 @@ class Taxi < Actor
 
     i.reg KeyDownEvent, K_UP do
       @moving_up = true
+      @landed = false
     end
 
     i.reg KeyDownEvent, K_LEFT do
-      @facing_dir = :left
+      @facing_dir = :left unless landed?
       @moving_left = true
     end
 
     i.reg KeyDownEvent, K_RIGHT do
-      @facing_dir = :right
+      @facing_dir = :right unless landed?
       @moving_right = true
     end
 
@@ -53,7 +60,19 @@ class Taxi < Actor
     i.reg KeyUpEvent, K_RIGHT do
       @moving_right = false
     end
+  end
 
+  def moving?
+    if @moving_left || @moving_right || @moving_up then true end
+  end
+
+  def landed?
+    @landed
+  end
+
+  def land
+    @landed = true
+    puts 'landing!'
   end
 
   def moving_up?;@moving_up;end
@@ -61,33 +80,38 @@ class Taxi < Actor
   def moving_right?;@moving_right;end
 
   def update_action
-    if moving_right? && moving_up? then
-      self.action = :thrust_up_right
-    else 
-      if moving_left? && moving_up? then
-        self.action = :thrust_up_left
+    if self.landed? then self.action = "landing_#{@facing_dir}".to_sym 
+    else
+      if moving_right? && moving_up? then
+        self.action = :thrust_up_right
+      else 
+        if moving_left? && moving_up? then
+          self.action = :thrust_up_left
+        end
       end
+      if !moving_right? && !moving_up? && !moving_left? then
+        self.action = "idle_#{@facing_dir}".to_sym
+      end
+      if moving_left? && !moving_up? then
+        self.action = :move_left
+      end
+      if moving_right? && !moving_up? then
+        self.action = :move_right
+      end
+      if moving_up? && !moving_left? && !moving_right? then
+        self.action = "thrust_up_facing_#{@facing_dir}".to_sym
+      end
+
     end
-    if !moving_right? && !moving_up? && !moving_left? then
-      self.action = "idle_#{@facing_dir}".to_sym
-    end
-    if moving_left? && !moving_up? then
-      self.action = :move_left
-    end
-    if moving_right? && !moving_up? then
-      self.action = :move_right
-    end
-    if moving_up? && !moving_left? && !moving_right? then
-      self.action = "thrust_up_facing_#{@facing_dir}".to_sym
-    end
- 
   end
+
+
 
   def update(time)
     update_action
     move_up time if moving_up?
-    move_right time if moving_right?
-    move_left time if moving_left?
+    move_right time if moving_right? && !landed?
+    move_left time if moving_left? && !landed?
     enforce_limits time
   end
 

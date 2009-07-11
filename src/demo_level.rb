@@ -13,16 +13,22 @@ class DemoLevel < PhysicalLevel
     @platform1 = create_actor :platform, :x => 300, :y => 400
     man = create_actor :man, :x => 300, :y => 367
 
+    space.add_collision_func(:platform, [:taxi_left_gear, :taxi_right_gear]) do |p,t|
+      unless @taxi.landed? || @taxi.moving? 
+        @taxi.land
+      end
+    end
 
-    @stars = []
-    20.times { @stars << Ftor.new(rand(viewport.width),rand(viewport.height)) }
-  end
 
-  def draw(target, x_off, y_off)
-    target.fill [25,25,25,255]
-    for star in @stars
-      target.draw_circle_s([star.x,star.y],1,[255,255,255,255])
+      @stars = []
+      20.times { @stars << Ftor.new(rand(viewport.width),rand(viewport.height)) }
+    end
+
+    def draw(target, x_off, y_off)
+      target.fill [25,25,25,255]
+      for star in @stars
+        target.draw_circle_s([star.x,star.y],1,[255,255,255,255])
+      end
     end
   end
-end
 
