@@ -10,6 +10,8 @@ class TaxiView < GraphicalActorView
 end
 
 class Taxi < Actor
+  attr_reader :facing_dir
+  attr_accessor :dying
 
   has_behaviors :animated, :updatable, 
     :physical => {

@@ -1,5 +1,6 @@
 require 'physical_level'
 require 'walls'
+require 'parts'
 
 class DemoLevel < PhysicalLevel
   def setup
@@ -14,14 +15,24 @@ class DemoLevel < PhysicalLevel
     man = create_actor :man, :x => 300, :y => 367
 
     space.add_collision_func(:platform, :taxi) do |p,t|
-      @taxi.die
+      unless @taxi.dying then
+        @taxi.dying = true
+        create_taxi_parts(@taxi.facing_dir)
+        puts @taxi.facing_dir
+        @taxi.die
+      end
     end
 
     space.add_collision_func(:platform, [:taxi_left_gear, :taxi_right_gear]) do |p,t|
       if @taxi.gear_down? && @taxi.can_survive? then
         @taxi.land
       else
+        unless @taxi.dying then
+        @taxi.dying = true
+      create_taxi_parts(@taxi.facing_dir)
+      puts @taxi.facing_dir
         @taxi.die
+        end
       end
 
     end
@@ -37,5 +48,21 @@ class DemoLevel < PhysicalLevel
         target.draw_circle_s([star.x,star.y],1,[255,255,255,255])
       end
     end
-  end
+
+    def create_taxi_parts(direction)
+      taxi_parts = {
+      'TaxiHood' => 'taxi_hood', 
+      'TaxiBlower' => 'taxi_blower',
+      'TaxiMidsection' => 'taxi_midsection',
+      'TaxiTail' => 'taxi_tail',
+      'TaxiRearsection' => 'taxi_rearsection'
+      }
+      taxi_parts.each do |part_class,part|
+        part = create_actor part.to_s, :x => eval(part_class).offset_x(direction) + @taxi.x, :y => eval(part_class).offset_y(direction) + @taxi.y
+        part.action = direction
+        part.physical.body.v = @taxi.physical.body.v
+      end
+
+    end
+end
 
