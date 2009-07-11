@@ -27,13 +27,17 @@ class Taxi < Actor
   def setup
     self.action = :idle_right
     @facing_dir = :right
-    @speed = 50
+    @speed = 60
     @max_speed = 900
-    @death_speed = 225
+    @death_speed = 240
     @up_vec = vec2(0,-@speed)
     @left_vec = vec2(-@speed,0)
     @right_vec = -@left_vec
     i = input_manager
+
+    i.reg KeyDownEvent, K_Z do
+      if @gear_down then @gear_down = false else @gear_down = true end
+    end
 
     i.reg KeyDownEvent, K_UP do
       @moving_up = true
@@ -42,12 +46,12 @@ class Taxi < Actor
 
     i.reg KeyDownEvent, K_LEFT do
       @facing_dir = :left unless landed?
-      @moving_left = true
+      @moving_left = true unless gear_down?
     end
 
     i.reg KeyDownEvent, K_RIGHT do
       @facing_dir = :right unless landed?
-      @moving_right = true
+      @moving_right = true unless gear_down?
     end
 
     i.reg KeyUpEvent, K_UP do
@@ -61,6 +65,10 @@ class Taxi < Actor
     i.reg KeyUpEvent, K_RIGHT do
       @moving_right = false
     end
+  end
+
+  def gear_down?
+    @gear_down
   end
 
   def moving?
@@ -80,7 +88,9 @@ class Taxi < Actor
   def moving_right?;@moving_right;end
 
   def update_action
-    if self.landed? then self.action = "landing_#{@facing_dir}".to_sym 
+    if self.gear_down? && !self.moving_up? then self.action = "landing_#{@facing_dir}".to_sym 
+    elsif self.gear_down? && self.moving_up? then
+      self.action = "thrust_gear_#{@facing_dir}".to_sym
     else
       if moving_right? && moving_up? then
         self.action = :thrust_up_right
