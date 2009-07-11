@@ -4,7 +4,7 @@ class Part < Actor
   def setup
     @speed = 20
     @turn_speed = rand(2)*0.00004
-    @ttl = 1000+rand(1000)
+    #@ttl = 4000
     x = (rand-0.5) * 2
     y = (rand-0.5) * 2
     @dir = vec2(x,y)
@@ -12,8 +12,8 @@ class Part < Actor
   end
 
   def update(time)
-    @ttl -= time
-    remove_self if @ttl < 0
+    #@ttl -= time
+    #remove_self if @ttl < 0
     super time
   end
 
