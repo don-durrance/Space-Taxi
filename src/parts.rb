@@ -1,6 +1,7 @@
 class Part < Actor
   attr_accessor :offset_x_left, :offset_x_right, :offset_y, :base_v
 
+
   def setup
     @speed = 20
     @turn_speed = rand(2)*0.00004
@@ -9,6 +10,10 @@ class Part < Actor
     y = (rand-0.5) * 2
     @dir = vec2(x,y)
     physical.body.apply_impulse(@dir*500*@speed, ZeroVec2) 
+
+    direction = @opts[:direction]
+    warp(vec2(@x+self.class.offset_x(direction), @y+self.class.offset_y(direction)))
+    self.action = direction
   end
 
   def update(time)
@@ -25,7 +30,6 @@ class TaxiBlower < Part
   :angle => -1.57079633,
   :mass => 50
   }
-
 
   OFFSET_X_LEFT = -15
   OFFSET_X_RIGHT = 15

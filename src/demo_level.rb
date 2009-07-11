@@ -1,13 +1,28 @@
 require 'physical_level'
 require 'walls'
 require 'parts'
-include Inflector
 
 class DemoLevel < PhysicalLevel
+  # TODO move to actor.rb?
+  TAXI_PARTS = {
+    TaxiHood => :taxi_hood, 
+    TaxiBlower => :taxi_blower,
+    TaxiMidsection => :taxi_midsection,
+    TaxiTail => :taxi_tail,
+    TaxiRearsection => :taxi_rearsection,
+    TaxiThruster => :taxi_thruster,
+    TaxiRightThruster => :taxi_right_thruster,
+    TaxiRearThruster => :taxi_rear_thruster
+  }
 
   def setup
     space.gravity = vec2(0,100)
     @taxi = create_actor :taxi, :x => 300, :y => 350
+
+    # TODO hrm... how to know to preload these?
+    TAXI_PARTS.each do |part_class,part|
+      @actor_factory.cached_actor_def part
+    end
 
     left_wall = create_actor :left_wall, :view => false
     top_wall = create_actor :top_wall, :view => false
@@ -50,23 +65,14 @@ class DemoLevel < PhysicalLevel
     end
 
     def create_taxi_parts(direction)
-      taxi_parts = [
-      'TaxiHood',
-      'TaxiBlower',
-      'TaxiMidsection',
-      'TaxiTail', 
-      'TaxiRearsection', 
-      'TaxiThruster',
-      'TaxiRightThruster',
-      'TaxiRearThruster' 
-      ]
       @parts = []
-      taxi_parts.each do |part|
-        part = create_actor part.to_s, :x => constantize(classify(part)).offset_x(direction) + @taxi.x, :y => constantize(classify(part)).offset_y(direction) + @taxi.y
-        part.action = direction
-        part.when :remove_me do
-          fire :restart_level
-        end
+      TAXI_PARTS.each do |part_class,part|
+        part = create_actor part, :x => @taxi.x, :y => @taxi.y, :direction => direction
+        @parts << part
+      end
+
+      @parts.last.when :remove_me do
+        fire :restart_level
       end
 
     end
