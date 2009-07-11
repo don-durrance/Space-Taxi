@@ -28,6 +28,7 @@ class Taxi < Actor
 
   def setup
     self.action = :idle_right
+    @gear_down = true
     @facing_dir = :right
     @speed = 60
     @max_speed = 900
@@ -40,7 +41,7 @@ class Taxi < Actor
     i.reg KeyDownEvent, K_Z do
       if @gear_down then @gear_down = false else @gear_down = true end
     end
-
+  
     i.reg KeyDownEvent, K_UP do
       @moving_up = true
       @landed = false

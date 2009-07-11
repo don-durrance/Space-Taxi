@@ -3,9 +3,10 @@ require 'walls'
 require 'parts'
 
 class DemoLevel < PhysicalLevel
+
   def setup
     space.gravity = vec2(0,100)
-    @taxi = create_actor :taxi, :x => 300, :y => 300
+    @taxi = create_actor :taxi, :x => 300, :y => 350
 
     left_wall = create_actor :left_wall, :view => false
     top_wall = create_actor :top_wall, :view => false
@@ -15,6 +16,19 @@ class DemoLevel < PhysicalLevel
     man = create_actor :man, :x => 300, :y => 367
 
     space.add_collision_func(:platform, :taxi) do |p,t|
+      kill_taxi
+    end
+
+    space.add_collision_func(:platform, [:taxi_left_gear, :taxi_right_gear]) do |p,t|
+      if @taxi.gear_down? && @taxi.can_survive? then
+        @taxi.land
+      else
+        kill_taxi
+      end
+
+    end
+
+    def kill_taxi
       unless @taxi.dying then
         @taxi.dying = true
         create_taxi_parts(@taxi.facing_dir)
@@ -22,21 +36,6 @@ class DemoLevel < PhysicalLevel
         @taxi.die
       end
     end
-
-    space.add_collision_func(:platform, [:taxi_left_gear, :taxi_right_gear]) do |p,t|
-      if @taxi.gear_down? && @taxi.can_survive? then
-        @taxi.land
-      else
-        unless @taxi.dying then
-        @taxi.dying = true
-      create_taxi_parts(@taxi.facing_dir)
-        explosion = create_actor :particle_system, :x => @taxi.x, :y => @taxi.y
-        @taxi.die
-        end
-      end
-
-    end
-
 
       @stars = []
       20.times { @stars << Ftor.new(rand(viewport.width),rand(viewport.height)) }
@@ -55,13 +54,26 @@ class DemoLevel < PhysicalLevel
       'TaxiBlower' => 'taxi_blower',
       'TaxiMidsection' => 'taxi_midsection',
       'TaxiTail' => 'taxi_tail',
-      'TaxiRearsection' => 'taxi_rearsection'
+      'TaxiRearsection' => 'taxi_rearsection',
+      'TaxiThruster' => 'taxi_thruster',
+      'TaxiRightThruster' => 'taxi_right_thruster',
+      'TaxiRearThruster' => 'taxi_rear_thruster'
       }
+      @parts = []
       taxi_parts.each do |part_class,part|
         part = create_actor part.to_s, :x => eval(part_class).offset_x(direction) + @taxi.x, :y => eval(part_class).offset_y(direction) + @taxi.y
         part.action = direction
+        part.when :remove_me do
+          fire :restart_level
+        end
       end
 
     end
-end
 
+    def update(time)
+      update_physics time
+      director.update time
+
+    end
+
+end
