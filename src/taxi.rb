@@ -46,12 +46,12 @@ class Taxi < Actor
 
     i.reg KeyDownEvent, K_LEFT do
       @facing_dir = :left unless landed?
-      @moving_left = true unless gear_down?
+      @moving_left = true 
     end
 
     i.reg KeyDownEvent, K_RIGHT do
       @facing_dir = :right unless landed?
-      @moving_right = true unless gear_down?
+      @moving_right = true 
     end
 
     i.reg KeyUpEvent, K_UP do
@@ -120,8 +120,8 @@ class Taxi < Actor
   def update(time)
     update_action
     move_up time if moving_up?
-    move_right time if moving_right? && !landed?
-    move_left time if moving_left? && !landed?
+    move_right time if moving_right? && !landed? && !gear_down?
+    move_left time if moving_left? && !landed? && !gear_down?
     enforce_limits time
   end
 
