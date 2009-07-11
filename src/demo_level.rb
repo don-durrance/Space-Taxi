@@ -1,6 +1,7 @@
 require 'physical_level'
 require 'walls'
 require 'parts'
+include Inflector
 
 class DemoLevel < PhysicalLevel
 
@@ -49,19 +50,19 @@ class DemoLevel < PhysicalLevel
     end
 
     def create_taxi_parts(direction)
-      taxi_parts = {
-      'TaxiHood' => 'taxi_hood', 
-      'TaxiBlower' => 'taxi_blower',
-      'TaxiMidsection' => 'taxi_midsection',
-      'TaxiTail' => 'taxi_tail',
-      'TaxiRearsection' => 'taxi_rearsection',
-      'TaxiThruster' => 'taxi_thruster',
-      'TaxiRightThruster' => 'taxi_right_thruster',
-      'TaxiRearThruster' => 'taxi_rear_thruster'
-      }
+      taxi_parts = [
+      'TaxiHood',
+      'TaxiBlower',
+      'TaxiMidsection',
+      'TaxiTail', 
+      'TaxiRearsection', 
+      'TaxiThruster',
+      'TaxiRightThruster',
+      'TaxiRearThruster' 
+      ]
       @parts = []
-      taxi_parts.each do |part_class,part|
-        part = create_actor part.to_s, :x => eval(part_class).offset_x(direction) + @taxi.x, :y => eval(part_class).offset_y(direction) + @taxi.y
+      taxi_parts.each do |part|
+        part = create_actor part.to_s, :x => constantize(classify(part)).offset_x(direction) + @taxi.x, :y => constantize(classify(part)).offset_y(direction) + @taxi.y
         part.action = direction
         part.when :remove_me do
           fire :restart_level
