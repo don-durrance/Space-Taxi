@@ -13,6 +13,10 @@ class DemoLevel < PhysicalLevel
     @platform1 = create_actor :platform, :x => 300, :y => 400
     man = create_actor :man, :x => 300, :y => 367
 
+    space.add_collision_func(:platform, :taxi) do |p,t|
+      @taxi.die
+    end
+
     space.add_collision_func(:platform, [:taxi_left_gear, :taxi_right_gear]) do |p,t|
       if @taxi.gear_down? && @taxi.can_survive? then
         @taxi.land
