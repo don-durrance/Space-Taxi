@@ -45,12 +45,12 @@ class Taxi < Actor
     end
 
     i.reg KeyDownEvent, K_LEFT do
-      @facing_dir = :left unless landed?
+      @facing_dir = :left unless landed? || gear_down?
       @moving_left = true 
     end
 
     i.reg KeyDownEvent, K_RIGHT do
-      @facing_dir = :right unless landed?
+      @facing_dir = :right unless landed? || gear_down?
       @moving_right = true 
     end
 
