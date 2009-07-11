@@ -32,7 +32,7 @@ class Taxi < Actor
     @facing_dir = :right
     @speed = 60
     @max_speed = 900
-    @death_speed = 240
+    @death_speed = 120
     @up_vec = vec2(0,-@speed)
     @left_vec = vec2(-@speed,0)
     @right_vec = -@left_vec
