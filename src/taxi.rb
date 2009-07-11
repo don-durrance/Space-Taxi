@@ -28,7 +28,8 @@ class Taxi < Actor
     self.action = :idle_right
     @facing_dir = :right
     @speed = 50
-    @max_speed = 800
+    @max_speed = 900
+    @death_speed = 225
     @up_vec = vec2(0,-@speed)
     @left_vec = vec2(-@speed,0)
     @right_vec = -@left_vec
@@ -133,6 +134,19 @@ class Taxi < Actor
   def move_right(time)
     @facing_dir = 'right'
     physical.body.apply_impulse(@right_vec*time, ZeroVec2)
+  end
+
+  def can_survive?
+    if physical.body.v.length <= @death_speed then true end
+  end
+
+  def dying?
+    @dying
+  end
+
+  def die
+    @dying = true
+    remove_self
   end
 
 

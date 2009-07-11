@@ -3,7 +3,7 @@ require 'walls'
 
 class DemoLevel < PhysicalLevel
   def setup
-    space.gravity = vec2(0,200)
+    space.gravity = vec2(0,300)
     @taxi = create_actor :taxi, :x => 300, :y => 300
 
     left_wall = create_actor :left_wall, :view => false
@@ -14,7 +14,10 @@ class DemoLevel < PhysicalLevel
     man = create_actor :man, :x => 300, :y => 367
 
     space.add_collision_func(:platform, [:taxi_left_gear, :taxi_right_gear]) do |p,t|
-      unless @taxi.landed? || @taxi.moving? 
+      unless @taxi.can_survive? 
+        @taxi.die
+      end
+      unless @taxi.landed? || @taxi.moving?  
         @taxi.land
       end
     end
