@@ -1,6 +1,7 @@
 require 'physical_level'
 require 'walls'
 require 'parts'
+require 'particle_system'
 
 class DemoLevel < PhysicalLevel
   # TODO move to actor.rb?
