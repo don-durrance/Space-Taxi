@@ -18,7 +18,7 @@ class DemoLevel < PhysicalLevel
 
   def setup
     space.gravity = vec2(0,100)
-    @taxi = create_actor :taxi, :x => 300, :y => 350
+    @taxi = create_actor :taxi, :x => 250, :y => 350
 
     # TODO hrm... how to know to preload these?
     TAXI_PARTS.each do |part_class,part|
@@ -30,10 +30,19 @@ class DemoLevel < PhysicalLevel
     right_wall = create_actor :right_wall, :view => false
     bottom_wall = create_actor :bottom_wall, :view => false
     @platform1 = create_actor :platform, :x => 300, :y => 400
-    man = create_actor :man, :x => 300, :y => 367
+    @people = []
+    spawn_person
 
     space.add_collision_func(:platform, :taxi) do |p,t|
       kill_taxi
+    end
+
+
+    space.add_collision_func(:man, [:taxi_left_gear, :taxi_right_gear, :taxi]) do |m,t|
+      dude = director.find_physical_obj m
+      unless dude.can_survive? then
+        kill_person(m)
+      end
     end
 
     space.add_collision_func(:platform, [:taxi_left_gear, :taxi_right_gear]) do |p,t|
@@ -52,6 +61,14 @@ class DemoLevel < PhysicalLevel
         explosion = create_actor :particle_system, :x => @taxi.x, :y => @taxi.y
         @taxi.die
       end
+    end
+
+    def kill_person(person)
+        dude = director.find_physical_obj person
+        dude.die
+        dude.when :remove_me do
+          @people.delete dude
+        end
     end
 
       @stars = []
@@ -76,12 +93,19 @@ class DemoLevel < PhysicalLevel
         fire :restart_level
       end
 
+      end
+
+    def spawn_person
+      man = create_actor :man, :x => 300, :y => 300
+      @people << man
     end
 
     def update(time)
       update_physics time
       director.update time
-
+      if @people.empty? then
+        spawn_person
+      end
     end
-
 end
+
