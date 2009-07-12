@@ -19,7 +19,7 @@ class Man < Actor
 
   def setup
     @ttl = 2000
-    self.action = :move_left
+    self.action = :waving
   end
 
   def update(time)

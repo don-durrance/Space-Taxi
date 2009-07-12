@@ -29,7 +29,11 @@ class DemoLevel < PhysicalLevel
     top_wall = create_actor :top_wall, :view => false
     right_wall = create_actor :right_wall, :view => false
     bottom_wall = create_actor :bottom_wall, :view => false
-    @platform1 = create_actor :platform, :x => 300, :y => 400
+    platform1 = create_actor :platform, :x => 300, :y => 400
+    platform2 = create_actor :platform, :x => 400, :y => 500
+    @platforms = []
+    @platforms << platform1
+    @platforms << platform2
     @people = []
     spawn_person
 
@@ -75,37 +79,38 @@ class DemoLevel < PhysicalLevel
       20.times { @stars << Ftor.new(rand(viewport.width),rand(viewport.height)) }
     end
 
-    def draw(target, x_off, y_off)
-      target.fill [25,25,25,255]
-      for star in @stars
-        target.draw_circle_s([star.x,star.y],1,[255,255,255,255])
-      end
+  def draw(target, x_off, y_off)
+    target.fill [25,25,25,255]
+    for star in @stars
+      target.draw_circle_s([star.x,star.y],1,[255,255,255,255])
+    end
+  end
+
+  def create_taxi_parts(direction)
+    @parts = []
+    TAXI_PARTS.each do |part_class,part|
+      part = create_actor part, :x => @taxi.x, :y => @taxi.y, :direction => direction
+      @parts << part
     end
 
-    def create_taxi_parts(direction)
-      @parts = []
-      TAXI_PARTS.each do |part_class,part|
-        part = create_actor part, :x => @taxi.x, :y => @taxi.y, :direction => direction
-        @parts << part
-      end
-
-      @parts.last.when :remove_me do
-        fire :restart_level
-      end
-
-      end
-
-    def spawn_person
-      man = create_actor :man, :x => 300, :y => 300
-      @people << man
+    @parts.last.when :remove_me do
+      fire :restart_level
     end
+  end
 
-    def update(time)
-      update_physics time
-      director.update time
-      if @people.empty? then
-        spawn_person
-      end
+  def spawn_person
+    platform = @platforms.last
+    myplatform = director.find_physical_obj platform
+    man = create_actor :man, :x => platform.x + platform.spawn_point_x, :y => platform.y + platform.spawn_point_y
+    @people << man
+  end
+
+  def update(time)
+    update_physics time
+    director.update time
+    if @people.empty? then
+      spawn_person
     end
+  end
 end
 
