@@ -13,7 +13,8 @@ class Taxi < Actor
   attr_reader :facing_dir
   attr_accessor :dying
 
-  has_behaviors :animated, :updatable, 
+  has_behaviors :updatable, 
+    :animated, 
     :physical => {
     :shape => :poly,
     :mass => 125,
@@ -23,11 +24,10 @@ class Taxi < Actor
       :taxi_right_gear => {:verts => [[7, 3], [9, 11], [18, 11], [12, 3] ], :shape => :poly, :offset => vec2(0,0)  },
       :taxi_left_gear => {:verts => [[-20, 11], [-11, 11], [-8, 3], [-14, 3], ], :shape => :poly, :offset => vec2(0,0) }
   ]
-
   } 
 
   def setup
-    self.action = :idle_right
+#    self.action = :jitter_left
     @gear_down = true
     @facing_dir = :right
     @speed = 60
@@ -41,7 +41,7 @@ class Taxi < Actor
     i.reg KeyDownEvent, K_Z do
       if @gear_down then @gear_down = false else @gear_down = true end
     end
-  
+
     i.reg KeyDownEvent, K_UP do
       @moving_up = true
       @landed = false
@@ -125,17 +125,16 @@ class Taxi < Actor
 
 
   def sound_check
-      if !moving_up? && !moving_left? && !moving_right? then
-        @sound_manager.stop_music :thrust
-        @thrust_playing = false
-      end
+    if !moving_up? && !moving_left? && !moving_right? then
+      @sound_manager.stop_music :thrust
+      @thrust_playing = false
+    end
   end
 
   def play_thrust
     if !@thrust_playing then
-    @sound_manager.play_music :thrust 
-    puts "Playing sound"
-    @thrust_playing = true
+      @sound_manager.play_music :thrust 
+      @thrust_playing = true
     end
 
   end
