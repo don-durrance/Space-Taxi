@@ -30,10 +30,13 @@ class DemoLevel < PhysicalLevel
     right_wall = create_actor :right_wall, :view => false
     bottom_wall = create_actor :bottom_wall, :view => false
     platform1 = create_actor :platform, :x => 300, :y => 400
-    platform2 = create_actor :platform, :x => 400, :y => 500
+    platform2 = create_actor :platform, :x => 450, :y => 500
+    platform3 = create_actor :platform, :x => 100, :y => 300
     @platforms = []
     @platforms << platform1
     @platforms << platform2
+    @platforms << platform3
+
     @people = []
     spawn_person
 
@@ -99,7 +102,7 @@ class DemoLevel < PhysicalLevel
   end
 
   def spawn_person
-    platform = @platforms[rand(@platforms.size)]
+    platform = @platforms[rand(@platforms.size) - 1]
     myplatform = director.find_physical_obj platform
     man = create_actor :man, :x => platform.x + platform.spawn_point[:x], :y => platform.y + platform.spawn_point[:y]
     @people << man
