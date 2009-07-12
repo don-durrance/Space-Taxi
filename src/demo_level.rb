@@ -101,7 +101,7 @@ class DemoLevel < PhysicalLevel
   def spawn_person
     platform = @platforms.last
     myplatform = director.find_physical_obj platform
-    man = create_actor :man, :x => platform.x + platform.spawn_point_x, :y => platform.y + platform.spawn_point_y
+    man = create_actor :man, :x => platform.x + platform.spawn_point[:x], :y => platform.y + platform.spawn_point[:y]
     @people << man
   end
 
