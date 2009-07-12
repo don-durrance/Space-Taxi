@@ -87,6 +87,10 @@ class Taxi < Actor
     @landed = true
   end
 
+  def music_playing?(thrust)
+    @sound_manager.instance_variable_get('@music')[thrust].playing?
+  end
+
   def moving_up?;@moving_up;end
   def moving_left?;@moving_left;end
   def moving_right?;@moving_right;end
@@ -120,9 +124,25 @@ class Taxi < Actor
   end
 
 
+  def sound_check
+      if !moving_up? && !moving_left? && !moving_right? then
+        @sound_manager.stop_music :thrust
+        @thrust_playing = false
+      end
+  end
+
+  def play_thrust
+    if !@thrust_playing then
+    @sound_manager.play_music :thrust 
+    puts "Playing sound"
+    @thrust_playing = true
+    end
+
+  end
 
   def update(time)
     update_action
+    sound_check
     move_up time if moving_up?
     move_right time if moving_right? && !landed? && !gear_down?
     move_left time if moving_left? && !landed? && !gear_down?
@@ -139,15 +159,18 @@ class Taxi < Actor
 
   def move_up(time)
     physical.body.apply_impulse(@up_vec*time, ZeroVec2)
+    play_thrust
   end
 
   def move_left(time)
     physical.body.apply_impulse(@left_vec*time, ZeroVec2)
+    play_thrust
   end
 
   def move_right(time)
     @facing_dir = 'right'
     physical.body.apply_impulse(@right_vec*time, ZeroVec2)
+    play_thrust
   end
 
   def can_survive?
