@@ -49,12 +49,12 @@ class Taxi < Actor
 
     i.reg KeyDownEvent, K_LEFT do
       @facing_dir = :left unless landed? || gear_down?
-      @moving_left = true 
+      @moving_left = true unless gear_down?
     end
 
     i.reg KeyDownEvent, K_RIGHT do
       @facing_dir = :right unless landed? || gear_down?
-      @moving_right = true 
+      @moving_right = true unless gear_down?
     end
 
     i.reg KeyUpEvent, K_UP do
@@ -136,11 +136,11 @@ class Taxi < Actor
       @sound_manager.play_music :thrust 
       @thrust_playing = true
     end
-
   end
 
   def update(time)
     update_action
+    play_thrust if moving?
     sound_check
     move_up time if moving_up?
     move_right time if moving_right? && !landed? && !gear_down?
@@ -158,18 +158,15 @@ class Taxi < Actor
 
   def move_up(time)
     physical.body.apply_impulse(@up_vec*time, ZeroVec2)
-    play_thrust
   end
 
   def move_left(time)
     physical.body.apply_impulse(@left_vec*time, ZeroVec2)
-    play_thrust
   end
 
   def move_right(time)
     @facing_dir = 'right'
     physical.body.apply_impulse(@right_vec*time, ZeroVec2)
-    play_thrust
   end
 
   def can_survive?
