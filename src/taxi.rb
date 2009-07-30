@@ -140,7 +140,7 @@ class Taxi < Actor
 
   def update(time)
     update_action
-    play_thrust if moving?
+    play_thrust if moving? 
     sound_check
     move_up time if moving_up?
     move_right time if moving_right? && !landed? && !gear_down?
@@ -178,6 +178,7 @@ class Taxi < Actor
   end
 
   def die
+    @sound_manager.stop_music :thrust
     @dying = true
     remove_self
   end
