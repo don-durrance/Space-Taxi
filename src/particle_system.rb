@@ -7,7 +7,7 @@ class ParticleSystemView < ActorView
     ax = @actor.x + x_off
     ay = @actor.y + y_off
     @actor.particles.each do |part|
-      target.draw_circle_s [part.x,part.y], 3, [part.r,part.g,part.b,part.a]
+      target.draw_circle_s [part.x,part.y], rand(3)+1, [part.r,part.g,part.b,part.a]
 
     end
 #    target.draw_circle [ax,ay], 20, [200,200,255,140]
@@ -38,9 +38,9 @@ class ParticleSystem < Actor
     part = Particle.new 
     part.x = self.x
     part.y = self.y
-    part.r = 100+rand(155)
+    part.r = 255 #100+rand(155)
     part.g = rand(155)
-    part.b = rand(155)
+    part.b = 0 #rand(155)
     part.a = 100+rand(155)
     rot = rand(Math::PI*100*2)/100.0
     part.dir = Ftor.new(-1,0).rotate(rot)
